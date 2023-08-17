@@ -63,7 +63,7 @@ async function signIn(req: Request, res: Response) {
             });
 
         const newRefreshToken = jwt.sign({ id: user._id },
-            process.env.ACCESS_TOKEN_SECRET || '',
+            process.env.REFRESH_TOKEN_SECRET || '',
             {
                 expiresIn: process.env.REFRESH_TOKEN_EXPIRATION || '1d'
             });
@@ -149,10 +149,9 @@ async function handleRefreshToken(req: Request, res: Response) {
                 async (err: Error, decoded: any) => {
                     if (err) return res.sendStatus(403); //Forbidden
                     console.log('attempted refresh token reuse!')
-                    const hackedUser = await User.findOne({ username: decoded.username });
+                    const hackedUser = await User.findById(decoded.id);
                     hackedUser.refreshToken = [];
                     const result = await hackedUser.save();
-                    console.log(result);
                 }
             );
             return res.sendStatus(403); //Forbidden
@@ -169,9 +168,9 @@ async function handleRefreshToken(req: Request, res: Response) {
                     console.log('expired refresh token')
                     foundUser.refreshToken = [...newRefreshTokenArray];
                     const result = await foundUser.save();
-                    console.log(result);
                 }
-                if (err || foundUser.username !== decoded.username) return res.sendStatus(403);
+
+                if (err || foundUser._id.toString() !== decoded.id) return res.sendStatus(403);
 
                 // Refresh token was still valid
                 const accessToken = jwt.sign({ id: foundUser._id },
@@ -181,7 +180,7 @@ async function handleRefreshToken(req: Request, res: Response) {
                     });
 
                 const newRefreshToken = jwt.sign({ id: foundUser._id },
-                    process.env.ACCESS_TOKEN_SECRET || '',
+                    process.env.REFRESH_TOKEN_SECRET || '',
                     {
                         expiresIn: process.env.REFRESH_TOKEN_EXPIRATION || '1d'
                     });

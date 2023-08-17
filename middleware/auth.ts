@@ -20,10 +20,12 @@ async function verifyToken(req: Request, res: Response, next: NextFunction) {
         }
 
         // Decode the token into the userId
-        const decoded: any = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET || '', ()=>{});
-        req.body.userId = decoded.id;
-
-        next();
+        jwt.verify(token, process.env.ACCESS_TOKEN_SECRET || '',
+            (err: Error, decoded: any) => {
+                if (err) return res.status(403).json({ message: 'Forbidden' })
+                req.body.userId = decoded.id;
+                next();
+            });
     } catch (e) {
         return res.status(400).send({ message: 'Verify token failed' });
     }
@@ -45,9 +47,26 @@ async function checkDuplicateEmail(req: Request, res: Response, next: NextFuncti
     }
 }
 
+async function checkDuplicateUsername(req: Request, res: Response, next: NextFunction) {
+    try {
+        // Find if there's any account with the provided email
+        const user = await User.findOne({ username: req.body.username });
+
+        // If the user exists, it means the email is used
+        if (user) {
+            return res.status(409).send({ message: 'Failed! Username is already used!' });
+        }
+
+        next();
+    } catch (e) {
+        return res.status(400).send({ message: 'Check duplicate username failed' });
+    }
+}
+
 const auth = {
     verifyToken,
-    checkDuplicateEmail
+    checkDuplicateEmail,
+    checkDuplicateUsername
 };
 
 export default auth;
