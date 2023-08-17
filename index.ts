@@ -5,7 +5,7 @@ import app from './server';
 dotenv.config();
 
 const PORT: string = process.env.PORT;
-const URI: string = process.env.CANVAS_DB_URI || '';
+const URI: string = process.env.COLORFLIX_DB_URI || '';
 mongoose.set('strictQuery', true);
 mongoose
     .connect(URI)

@@ -14,7 +14,8 @@ const UserModel = mongoose.model(
         }, // salt for increasing security
         name: String,
         username: String,
-        photoUrl: String // profile picture
+        photoUrl: String, // profile picture
+        refreshToken: [String]
     }),
 );
 
