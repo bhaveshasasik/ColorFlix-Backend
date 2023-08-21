@@ -3,12 +3,17 @@ import mongoose from 'mongoose';
 const PostModel = mongoose.model(
     'Post',
     new mongoose.Schema({
-        userId: {
+        user: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User',
         },
+        filename: String,
         photoUrl: String,
-        postedDate: Date,
+        caption: String,
+        postedDate: {
+            type: Date,
+            default: Date.now
+        },
         colorPalette: [String]
     })
 );

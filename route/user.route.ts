@@ -8,7 +8,6 @@ router.use(auth.verifyToken);
 
 router.route('/')
     .get(userCtrl.getInfo)
-    .put(userCtrl.updateInfo)
-;
+    .put(userCtrl.updateInfo);
 
 export default router;
