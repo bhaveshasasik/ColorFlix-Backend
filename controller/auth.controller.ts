@@ -43,7 +43,7 @@ async function signIn(req: Request, res: Response) {
 
         let user = await User.findOne({
             email: email
-        }).select('+salt +password');
+        }).select('+salt +password +refreshToken');
 
         if (!user) {
             return res.status(401).json({ message: "This account doesn't exist" });
@@ -189,7 +189,7 @@ async function handleRefreshToken(req: Request, res: Response) {
                 await foundUser.save();
 
                 // Creates Secure Cookie with refresh token
-                res.cookie('jwt', newRefreshToken, { httpOnly: true, secure: true, sameSite: 'none', maxAge: 24 * 60 * 60 * 1000 });
+                res.cookie('jwt', newRefreshToken, { httpOnly: true, secure: true, sameSite: 'none', maxAge: 30 * 24 * 60 * 60 * 1000 });
 
                 return res.json({
                     name: foundUser.name,
@@ -204,6 +204,7 @@ async function handleRefreshToken(req: Request, res: Response) {
         });
     }
 }
+
 const authCtrl = {
     signUp,
     signIn,
