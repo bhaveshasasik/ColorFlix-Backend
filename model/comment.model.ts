@@ -1,17 +1,20 @@
-import mongoose from 'mongoose';
+import mongoose, { now } from 'mongoose';
 
 const CommentModel = mongoose.model(
     'Comment',
     new mongoose.Schema({
-        postId: {
+        post: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Post',
         },
-        userId: {
+        user: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User',
         },
-        postedDate: Date,
+        postedDate: {
+            type: Date,
+            default: Date.now
+        },
         context: String
     })
 );
