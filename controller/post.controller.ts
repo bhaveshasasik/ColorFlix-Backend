@@ -4,13 +4,39 @@ import Like from '../model/like.model';
 
 import fileHandler from '../util/file-upload';
 import fs from 'fs';
+import axios from 'axios';
+import FormData from 'form-data';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 async function createPost(req: Request, res: Response) {
     try {
         const userId = req.body.userId;
+
+        // Prepare the photo
         const photo: any = req.files.photo;
         const key = Date.now() + '-' + photo.name;
-        const body = fs.createReadStream(photo.tempFilePath);
+
+        // Convert the photo to Stream format
+        let body = fs.createReadStream(photo.tempFilePath);
+
+        // Build a form that contains the photo
+        const formData = new FormData();
+        formData.append('image', body);
+
+        // Generate the color palettes from Flask server
+        const colorResponse = await axios.post(process.env.FLASK_SERVER,
+            formData,
+            {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+        const colorPalette = colorResponse.data.colors;
+
+        // Upload the photo to AWS S3 Storage
+        body = fs.createReadStream(photo.tempFilePath);
         const photoUrl = await fileHandler.uploadFile(key, body);
 
         const newPost = new Post({
@@ -18,13 +44,12 @@ async function createPost(req: Request, res: Response) {
             filename: key,
             photoUrl: photoUrl,
             caption: req.body.caption || '',
-            colorPalette: [],
+            colorPalette: colorPalette,
         });
         await newPost.save();
 
         return res.sendStatus(200);
     } catch (e) {
-        console.log(e)
         return res.status(400).send({ message: e.message });
     }
 }
