@@ -3,16 +3,18 @@ import mongoose from 'mongoose';
 const LikeModel = mongoose.model(
     'Like',
     new mongoose.Schema({
-        email: String,
-        postId: {
+        post: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Post',
         },
-        userId: {
+        user: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User',
         },
-        likedDate: Date
+        likedDate: {
+            type: Date,
+            default: Date.now
+        }
     })
 );
 

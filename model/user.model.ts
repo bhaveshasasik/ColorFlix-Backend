@@ -15,7 +15,10 @@ const UserModel = mongoose.model(
         name: String,
         username: String,
         photoUrl: String, // profile picture
-        refreshToken: [String]
+        refreshToken: {
+            type: [String],
+            select: false
+        }
     }),
 );
 

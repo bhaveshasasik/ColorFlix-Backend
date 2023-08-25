@@ -3,6 +3,7 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import authRoute from './route/auth.route';
 import userRoute from './route/user.route';
+import postRoute from './route/post.route';
 
 const app = express();
 const corsOptions = {
@@ -12,10 +13,12 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 app.use(cookieParser());
-app.use(express.json());
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }));
 
 app.use('/api/v1/auth', authRoute);
 app.use('/api/v1/user', userRoute);
+app.use('/api/v1/post', postRoute);
 
 app.use('*', (req, res) => res.status(404).json({ err: 'URL not found' }));
 
