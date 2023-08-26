@@ -1,0 +1,522 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "This is a social media backend that generates color palettes of photos",
+        "title": "Swagger Colorflix Social Media",
+        "contact": {
+            "email": "hodangkhoinguyen@gmail.com"
+        }
+    },
+    "host": "http://localhost:5000/api/v1",
+    "tags": [
+        {
+            "name": "auth",
+            "description": "Authentication"
+        },
+        {
+            "name": "user",
+            "description": "Operations about user"
+        },
+        {
+            "name": "post",
+            "description": "Handle photo posting"
+        },
+        {
+            "name": "like",
+            "description": "Handle like for each post"
+        },
+        {
+            "name": "comment",
+            "description": "Handle comment for each post"
+        }
+    ],
+    "schemes": [
+        "https",
+        "http"
+    ],
+    "paths": {
+        "/auth/signin": {
+            "post": {
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Sign in",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "email",
+                        "required": true
+                    },
+                    {
+                        "in": "body",
+                        "name": "password",
+                        "required": true
+                    }
+                ]
+            }
+        },
+        "/auth/signup": {
+            "post": {
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Sign up",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "email",
+                        "required": true
+                    },
+                    {
+                        "in": "body",
+                        "name": "password",
+                        "required": true
+                    },
+                    {
+                        "in": "body",
+                        "name": "name",
+                        "required": true
+                    },
+                    {
+                        "in": "body",
+                        "name": "username",
+                        "required": true
+                    }
+                ]
+            }
+        },
+        "/auth/signout": {
+            "post": {
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Sign out",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ]
+            }
+        },
+        "/auth/refreshtoken": {
+            "post": {
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Get new access token using refresh token saved in cookie",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ]
+            }
+        },
+        "/user": {
+            "get": {
+                "tags": [
+                    "user"
+                ],
+                "summary": "Get user's info",
+                "produces": [
+                    "application/json"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "user"
+                ],
+                "summary": "Update user's info",
+                "description": "Only update name is available",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "name",
+                        "required": true
+                    }
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/post": {
+            "post": {
+                "tags": [
+                    "post"
+                ],
+                "summary": "Create a new post",
+                "consumes": "multipart/form-data",
+                "description": "Only update name is available",
+                "parameters": [
+                    {
+                        "in": "formData",
+                        "name": "caption"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "photo",
+                        "type": "file",
+                        "required": true
+                    }
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/post/user/{userId}": {
+            "post": {
+                "tags": [
+                    "post"
+                ],
+                "summary": "Create a new post",
+                "consumes": "multipart/form-data",
+                "description": "Only update name is available",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "userId",
+                        "required": true
+                    },
+                    {
+                        "in": "formData",
+                        "name": "caption"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "photo",
+                        "type": "file",
+                        "required": true
+                    }
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/post/{postId}": {
+            "get": {
+                "tags": [
+                    "post"
+                ],
+                "summary": "Get post by ID",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "postId",
+                        "required": true
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "post"
+                ],
+                "summary": "Delete post by ID",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "postId",
+                        "required": true
+                    }
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "post"
+                ],
+                "summary": "Update post by ID",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "postId",
+                        "required": true
+                    },
+                    {
+                        "in": "body",
+                        "name": "caption"
+                    }
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/post/{postId}/like": {
+            "get": {
+                "tags": [
+                    "like"
+                ],
+                "summary": "Get all likes by post ID",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "postId",
+                        "required": true
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ]
+            },
+            "post": {
+                "tags": [
+                    "like"
+                ],
+                "summary": "Like a post by post ID",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "postId",
+                        "required": true
+                    }
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/post/{postId}/comment": {
+            "get": {
+                "tags": [
+                    "comment"
+                ],
+                "summary": "Get all comments by post ID",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "postId",
+                        "required": true
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "comment"
+                ],
+                "summary": "Make a comment for a post by post ID",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "postId",
+                        "required": true
+                    }
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/post/{postId}/comment/{commentId}": {
+            "put": {
+                "tags": [
+                    "comment"
+                ],
+                "summary": "Update a comment by post ID and comment ID",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "postId",
+                        "required": true
+                    },
+                    {
+                        "in": "query",
+                        "name": "commentId",
+                        "required": true
+                    }
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "comment"
+                ],
+                "summary": "Delete a comment by post ID and comment ID",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "postId",
+                        "required": true
+                    },
+                    {
+                        "in": "query",
+                        "name": "commentId",
+                        "required": true
+                    }
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
+            }
+        }
+    },
+    "securityDefinitions": {
+        "Bearer": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
+    },
+    "definitions": {
+        "User": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "MongoDB ID"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "salt": {
+                    "type": "string",
+                    "description": "salt password for higher security"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                },
+                "photoUrl": {
+                    "type": "string",
+                    "description": "profile photo url"
+                },
+                "refreshToken": {
+                    "type": "[string]"
+                }
+            }
+        },
+        "Post": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "MongoDB ID",
+                    "description": "refer to the owner"
+                },
+                "user": {
+                    "type": "MongoDB ID"
+                },
+                "filename": {
+                    "type": "String"
+                },
+                "photoUrl": {
+                    "type": "string"
+                },
+                "caption": {
+                    "type": "string"
+                },
+                "postedDate": {
+                    "type": "Date"
+                },
+                "colorPalette": {
+                    "type": "[string]"
+                }
+            }
+        },
+        "Like": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "MongoDB ID"
+                },
+                "post": {
+                    "type": "MongoDB ID",
+                    "description": "refer to the post"
+                },
+                "user": {
+                    "type": "MongoDB ID",
+                    "description": "refer to the user who likes the post"
+                },
+                "likedDate": {
+                    "type": "Date"
+                }
+            }
+        },
+        "Comment": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "MongoDB ID"
+                },
+                "post": {
+                    "type": "MongoDB ID",
+                    "description": "refer to the post"
+                },
+                "user": {
+                    "type": "MongoDB ID",
+                    "description": "refer to the writer of the comment"
+                },
+                "postedDate": {
+                    "type": "Date"
+                }
+            }
+        }
+    },
+    "externalDocs": {
+        "description": "Find out more about Swagger",
+        "url": "http://swagger.io"
+    }
+}
