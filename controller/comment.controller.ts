@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import Comment from '../model/comment.model';
+import redisClient from '../util/redis-cache';
 
 async function createComment(req: Request, res: Response) {
     try {
@@ -24,11 +25,15 @@ async function getAllCommentByPostId(req: Request, res: Response) {
     try {
         const postId = req.params.postId;
 
-        const comments = await Comment.find({
-            post: postId
-        })
-            .select('-__v -post')
-            .populate('user', 'name username');
+        const comments = await redisClient.getOrSetCache(`post:${postId}/comment`,
+            async () => {
+                const newComments = await Comment.find({
+                    post: postId
+                })
+                    .select('-__v -post')
+                    .populate('user', 'name username');
+                return newComments;
+            });
 
         return res.json(comments);
     } catch (e) {

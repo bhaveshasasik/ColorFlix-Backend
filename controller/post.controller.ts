@@ -4,6 +4,7 @@ import Like from '../model/like.model';
 
 import fileHandler from '../util/file-upload';
 import fs from 'fs';
+import redisClient from '../util/redis-cache';
 import axios from 'axios';
 import FormData from 'form-data';
 import dotenv from 'dotenv';
@@ -58,9 +59,14 @@ async function getPostById(req: Request, res: Response) {
     try {
         const postId = req.params.postId;
         const userId = req.body.userId;
-        const post = await Post.findById(postId)
-            .select('-__v')
-            .populate('user', 'name username');
+
+        const post = await redisClient.getOrSetCache(`post:${postId}`,
+            async () => {
+                const newPost = await Post.findById(postId)
+                    .select('-__v')
+                    .populate('user', 'name username');
+                return newPost;
+            });
 
         const countLike = await Like.count({
             post: postId
